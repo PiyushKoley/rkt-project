@@ -26,7 +26,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Autowired
     private JwtTokenGenerator jwtTokenGenerator;
 
-    private static final long REFRESH_TOKEN_EXPIRATION = /*10*60*/40*1000; // valid for 10 hours....
+    private static final long REFRESH_TOKEN_EXPIRATION = 10*60*60*1000; // valid for 10 hours....
 
     @Override
     public String createRefreshToken(String email) {
