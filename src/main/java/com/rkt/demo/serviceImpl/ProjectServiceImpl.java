@@ -1,6 +1,7 @@
 package com.rkt.demo.serviceImpl;
 
-import com.rkt.demo.convertor.CustomerHelper;
+import com.rkt.demo.convertor.CustomerConvertor;
+import com.rkt.demo.convertor.ProjectConvertor;
 import com.rkt.demo.dto.requestDto.ProjectDto;
 import com.rkt.demo.dto.responseDto.ProjectResponseDto;
 import com.rkt.demo.entity.CustomerEntity;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +33,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         long customerCode = Long.parseLong(projectDto.getCustomerCode());
 
-        long customerId = customerCode - CustomerHelper.SOME_FIXED_VALUE;
+        long customerId = customerCode - CustomerConvertor.SOME_FIXED_VALUE;
 
         CustomerEntity customerEntity = customerRepository.findById(customerId)
                 .orElseThrow(
@@ -66,22 +66,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         return projectRepository.findAll().stream()
                 .filter(Objects::nonNull)
-                .map(
-                        (projectEntity) -> {
-
-                            CustomerEntity customerEntity = projectEntity.getCustomerEntity();
-
-                            return ProjectResponseDto.builder()
-                                    .projectCode(projectEntity.getId())
-                                    .projectName(projectEntity.getProjectName())
-                                    .projectType(projectEntity.getProjectType().toString())
-                                    .projectDescription(projectEntity.getProjectDescription())
-                                    .projectManager(projectEntity.getProjectManager())
-                                    .customerCode(customerEntity.getCustomerCode())
-                                    .customerName(customerEntity.getCustomerName())
-                                    .build();
-                        }
-                )
+                .map(ProjectConvertor::convertProjectEntityToProjectResponseDto)
                 .collect(Collectors.toList());
     }
 }
