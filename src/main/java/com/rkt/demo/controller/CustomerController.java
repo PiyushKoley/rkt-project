@@ -19,7 +19,7 @@ public class CustomerController {
 
         customerService.addNewCustomer(customerDto);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("customer added successfully.");
     }
 
     @GetMapping("/get-all-name-id")
