@@ -3,6 +3,7 @@ package com.rkt.demo.serviceImpl;
 import com.rkt.demo.convertor.CustomerConvertor;
 import com.rkt.demo.dto.requestDto.CustomerDto;
 import com.rkt.demo.dto.responseDto.CustomerNameIdDto;
+import com.rkt.demo.dto.responseDto.PaginationResponseDto;
 import com.rkt.demo.dto.responseDto.CustomerResponseDto;
 import com.rkt.demo.entity.CustomerEntity;
 import com.rkt.demo.exception.CustomerAlreadyExistException;
@@ -75,18 +76,29 @@ public class CustomerServiceImpl implements CustomerService {
                 .collect(Collectors.toList());
     }
 
-
-
-    public List<CustomerResponseDto> getCustomersWithPagination(int pageNumber, int pageSize) {
+    @Override
+    public PaginationResponseDto getCustomersWithPagination(int pageNumber, int pageSize) {
 
         Pageable p = PageRequest.of(pageNumber, pageSize);
 
         Page<CustomerEntity> pages = customerRepository.findAll(p);
 
-        return pages.get()
-                .filter(Objects::nonNull)
-                .map(CustomerConvertor::convertCustomerEntityToCustomerResponseDto)
-                .collect(Collectors.toList());
+
+        List<CustomerResponseDto> customersList = pages.get()
+                                .filter(Objects::nonNull)
+                                .map(CustomerConvertor::convertCustomerEntityToCustomerResponseDto)
+                                .toList();
+
+
+        return PaginationResponseDto.builder()
+                .requiredList(customersList)
+                .currentPageItemsCount(customersList.size())
+                .totalItemsCount(pages.getTotalElements())
+                .pageSize(pages.getSize())
+                .pageNumber(pages.getNumber())
+                .totalPages(pages.getTotalPages())
+                .isLastPage(pages.isLast())
+                .build();
 
     }
 

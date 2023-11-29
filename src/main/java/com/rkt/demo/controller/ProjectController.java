@@ -25,4 +25,11 @@ public class ProjectController {
     public ResponseEntity<?> getAllProjects() {
         return ResponseEntity.ok(projectService.getAllProjects());
     }
+
+    @GetMapping("/get")
+    public ResponseEntity<?> getProjectsWithPagination(@RequestParam(value = "pageNumber",defaultValue = "0") int pageNumber,
+                                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+
+        return ResponseEntity.ok(projectService.getProjectsWithPagination(pageNumber, pageSize));
+    }
 }

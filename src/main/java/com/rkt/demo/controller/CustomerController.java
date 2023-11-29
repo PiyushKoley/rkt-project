@@ -33,4 +33,10 @@ public class CustomerController {
     }
 
 
+    @GetMapping("/get")
+    public ResponseEntity<?> getCustomersWithPagination(@RequestParam(value = "pageNumber",defaultValue = "0") int pageNumber,
+                                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+                                                        ) {
+        return ResponseEntity.ok(customerService.getCustomersWithPagination(pageNumber,pageSize));
+    }
 }

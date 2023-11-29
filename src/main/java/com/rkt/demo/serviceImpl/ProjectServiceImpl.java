@@ -3,6 +3,7 @@ package com.rkt.demo.serviceImpl;
 import com.rkt.demo.convertor.CustomerConvertor;
 import com.rkt.demo.convertor.ProjectConvertor;
 import com.rkt.demo.dto.requestDto.ProjectDto;
+import com.rkt.demo.dto.responseDto.PaginationResponseDto;
 import com.rkt.demo.dto.responseDto.ProjectResponseDto;
 import com.rkt.demo.entity.CustomerEntity;
 import com.rkt.demo.entity.ProjectEntity;
@@ -12,6 +13,9 @@ import com.rkt.demo.repository.CustomerRepository;
 import com.rkt.demo.repository.ProjectRepository;
 import com.rkt.demo.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,5 +72,27 @@ public class ProjectServiceImpl implements ProjectService {
                 .filter(Objects::nonNull)
                 .map(ProjectConvertor::convertProjectEntityToProjectResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PaginationResponseDto getProjectsWithPagination(int pageNumber, int pageSize) {
+
+        Pageable p = PageRequest.of(pageNumber,pageSize);
+        Page<ProjectEntity> pages = projectRepository.findAll(p);
+
+        List<ProjectResponseDto> projectResponseDtoList = pages.get()
+                                    .filter(Objects::nonNull)
+                                    .map(ProjectConvertor::convertProjectEntityToProjectResponseDto)
+                                    .toList();
+
+        return PaginationResponseDto.builder()
+                .requiredList(projectResponseDtoList)
+                .currentPageItemsCount(projectResponseDtoList.size())
+                .totalItemsCount(pages.getTotalElements())
+                .pageSize(pages.getSize())
+                .pageNumber(pages.getNumber())
+                .totalPages(pages.getTotalPages())
+                .isLastPage(pages.isLast())
+                .build();
     }
 }
