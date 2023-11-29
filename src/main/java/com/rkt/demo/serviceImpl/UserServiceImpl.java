@@ -2,6 +2,7 @@ package com.rkt.demo.serviceImpl;
 
 import com.rkt.demo.dto.requestDto.UserDto;
 import com.rkt.demo.entity.UserEntity;
+import com.rkt.demo.enums.Role;
 import com.rkt.demo.exception.EmailAlreadyInUserException;
 import com.rkt.demo.repository.UserRepository;
 import com.rkt.demo.service.UserService;
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
                 .name(userDto.getName())
                 .age(userDto.getAge())
                 .email(userDto.getEmail())
+                .role(Role.valueOf(userDto.getRole()))
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .build();
 

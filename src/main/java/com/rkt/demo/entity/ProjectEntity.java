@@ -7,7 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "projects")
@@ -21,13 +27,27 @@ public class ProjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-//    @Column(unique = true)
-//    private String projectCode;
+
     private String projectName;
     private String projectDescription;
     private String projectManager;
     @Enumerated(EnumType.STRING)
     private ProjectType projectType;
+
+    @CreationTimestamp
+    @Column(updatable = false,nullable = false)
+    private Date createdAt;
+    @UpdateTimestamp
+    @Column(insertable = false)
+    private Date updatedAt;
+
+    @CreatedBy
+    @Column(updatable = false,nullable = false)
+    private long createdByUser;
+
+    @LastModifiedBy
+    @Column(insertable = false)
+    private long updatedByUser;
 
     @ManyToOne
     @JoinColumn
