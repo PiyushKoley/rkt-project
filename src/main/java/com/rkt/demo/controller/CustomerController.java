@@ -1,6 +1,7 @@
 package com.rkt.demo.controller;
 
 import com.rkt.demo.dto.requestDto.CustomerDto;
+import com.rkt.demo.dto.requestDto.CustomerUpdateDto;
 import com.rkt.demo.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +39,10 @@ public class CustomerController {
                                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
                                                         ) {
         return ResponseEntity.ok(customerService.getCustomersWithPagination(pageNumber,pageSize));
+    }
+
+    @PutMapping("/update-customer")
+    public ResponseEntity<?> updateCustomer(@RequestBody() CustomerUpdateDto customerUpdateDto){
+        return ResponseEntity.ok(customerService.updateCustomer(customerUpdateDto));
     }
 }

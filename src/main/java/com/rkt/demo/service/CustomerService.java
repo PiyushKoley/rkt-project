@@ -1,6 +1,7 @@
 package com.rkt.demo.service;
 
 import com.rkt.demo.dto.requestDto.CustomerDto;
+import com.rkt.demo.dto.requestDto.CustomerUpdateDto;
 import com.rkt.demo.dto.responseDto.CustomerNameIdDto;
 import com.rkt.demo.dto.responseDto.PaginationResponseDto;
 import com.rkt.demo.dto.responseDto.CustomerResponseDto;
@@ -16,4 +17,6 @@ public interface CustomerService {
     public List<CustomerResponseDto> getAllCustomers();
 
     public PaginationResponseDto getCustomersWithPagination(int pageNumber, int pageSize);
+
+    public CustomerResponseDto updateCustomer(CustomerUpdateDto customerUpdateDto);
 }

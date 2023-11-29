@@ -1,6 +1,7 @@
 package com.rkt.demo.controller;
 
 import com.rkt.demo.dto.requestDto.ProjectDto;
+import com.rkt.demo.dto.requestDto.ProjectUpdateDto;
 import com.rkt.demo.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +32,11 @@ public class ProjectController {
                                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         return ResponseEntity.ok(projectService.getProjectsWithPagination(pageNumber, pageSize));
+    }
+
+    @PutMapping("/update-project")
+    public ResponseEntity<?> updateProject(@RequestBody() ProjectUpdateDto projectUpdateDto){
+        projectService.updateProject(projectUpdateDto);
+        return ResponseEntity.ok("Project Updated...");
     }
 }

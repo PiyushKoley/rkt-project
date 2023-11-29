@@ -2,11 +2,13 @@ package com.rkt.demo.serviceImpl;
 
 import com.rkt.demo.convertor.CustomerConvertor;
 import com.rkt.demo.dto.requestDto.CustomerDto;
+import com.rkt.demo.dto.requestDto.CustomerUpdateDto;
 import com.rkt.demo.dto.responseDto.CustomerNameIdDto;
 import com.rkt.demo.dto.responseDto.PaginationResponseDto;
 import com.rkt.demo.dto.responseDto.CustomerResponseDto;
 import com.rkt.demo.entity.CustomerEntity;
 import com.rkt.demo.exception.CustomerAlreadyExistException;
+import com.rkt.demo.exception.CustomerNotPresentException;
 import com.rkt.demo.repository.CustomerRepository;
 import com.rkt.demo.repository.UserRepository;
 import com.rkt.demo.service.CustomerService;
@@ -102,5 +104,25 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
+    @Override
+    public CustomerResponseDto updateCustomer(CustomerUpdateDto customerUpdateDto) {
+
+        long customerCode = Long.parseLong(customerUpdateDto.getCustomerCode());
+        long customerId = customerCode - SOME_FIXED_VALUE;
+
+        CustomerEntity customerEntity = customerRepository.findById(customerId)
+                .orElseThrow(
+                        () -> new CustomerNotPresentException(String.format("customer with customerCode : %s is not present", customerCode))
+                );
+
+        customerEntity.setCustomerName(customerUpdateDto.getCustomerName());
+        customerEntity.setContactEmail(customerUpdateDto.getContactEmail());
+        customerEntity.setContactPerson(customerUpdateDto.getContactPerson());
+        customerEntity.setContactPhone(customerUpdateDto.getContactPhone());
+
+        customerEntity = customerRepository.save(customerEntity);
+
+        return CustomerConvertor.convertCustomerEntityToCustomerResponseDto(customerEntity);
+    }
 
 }

@@ -3,12 +3,14 @@ package com.rkt.demo.serviceImpl;
 import com.rkt.demo.convertor.CustomerConvertor;
 import com.rkt.demo.convertor.ProjectConvertor;
 import com.rkt.demo.dto.requestDto.ProjectDto;
+import com.rkt.demo.dto.requestDto.ProjectUpdateDto;
 import com.rkt.demo.dto.responseDto.PaginationResponseDto;
 import com.rkt.demo.dto.responseDto.ProjectResponseDto;
 import com.rkt.demo.entity.CustomerEntity;
 import com.rkt.demo.entity.ProjectEntity;
 import com.rkt.demo.enums.ProjectType;
 import com.rkt.demo.exception.CustomerNotPresentException;
+import com.rkt.demo.exception.ProjectNotPresentException;
 import com.rkt.demo.repository.CustomerRepository;
 import com.rkt.demo.repository.ProjectRepository;
 import com.rkt.demo.service.ProjectService;
@@ -94,5 +96,23 @@ public class ProjectServiceImpl implements ProjectService {
                 .totalPages(pages.getTotalPages())
                 .isLastPage(pages.isLast())
                 .build();
+    }
+
+    @Override
+    public void updateProject(ProjectUpdateDto projectUpdateDto) {
+        long projectId = Long.parseLong(projectUpdateDto.getProjectId());
+
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(
+                        () -> new ProjectNotPresentException(String.format("project with projectId : %s is not present", projectId))
+
+                );
+
+        projectEntity.setProjectName(projectUpdateDto.getProjectName());
+        projectEntity.setProjectType(ProjectType.valueOf(projectUpdateDto.getProjectType()));
+        projectEntity.setProjectManager(projectUpdateDto.getProjectManager());
+        projectEntity.setProjectDescription(projectUpdateDto.getProjectDescription());
+
+        projectRepository.save(projectEntity);
     }
 }
