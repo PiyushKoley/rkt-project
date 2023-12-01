@@ -93,4 +93,9 @@ public class UserController {
 
         return ResponseEntity.ok(loginResponseDto);
     }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<?> getAllUserNameIdDto(){
+        return ResponseEntity.ok(userService.getAllUserNameId());
+    }
 }

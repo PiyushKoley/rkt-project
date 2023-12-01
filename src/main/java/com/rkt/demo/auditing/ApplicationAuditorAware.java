@@ -1,6 +1,7 @@
 package com.rkt.demo.auditing;
 
 import com.rkt.demo.entity.UserEntity;
+import com.rkt.demo.security.CustomUserDetails;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +19,8 @@ public class ApplicationAuditorAware implements AuditorAware<Long> {
             return Optional.empty();
         }
 
-        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        return Optional.of(userEntity.getId());
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+//        System.out.println(userDetails.getUserId());
+        return Optional.of(userDetails.getUserId());
     }
 }

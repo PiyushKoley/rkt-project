@@ -5,6 +5,7 @@ import com.rkt.demo.convertor.ProjectConvertor;
 import com.rkt.demo.dto.requestDto.ProjectDto;
 import com.rkt.demo.dto.requestDto.ProjectUpdateDto;
 import com.rkt.demo.dto.responseDto.PaginationResponseDto;
+import com.rkt.demo.dto.responseDto.ProjectCustomerNameIdDto;
 import com.rkt.demo.dto.responseDto.ProjectResponseDto;
 import com.rkt.demo.entity.CustomerEntity;
 import com.rkt.demo.entity.ProjectEntity;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -114,5 +116,34 @@ public class ProjectServiceImpl implements ProjectService {
         projectEntity.setProjectDescription(projectUpdateDto.getProjectDescription());
 
         projectRepository.save(projectEntity);
+    }
+
+    @Override
+    public List<ProjectCustomerNameIdDto> getAllProjectCustomerNameId() {
+
+        List<ProjectCustomerNameIdDto> getAllPCNameIdDto = new ArrayList<>();
+
+        List<ProjectEntity> listOfProjects = projectRepository.findAll();
+
+
+        for(ProjectEntity project : listOfProjects) {
+
+            CustomerEntity customerEntity = project.getCustomerEntity();
+
+            ProjectCustomerNameIdDto pcdto = ProjectCustomerNameIdDto.builder()
+                    .projectName(project.getProjectName())
+                    .projectId(project.getId())
+                    .customerName(customerEntity.getCustomerName())
+                    .customerCode(customerEntity.getCustomerCode())
+                    .build();
+
+            getAllPCNameIdDto.add(pcdto);
+        }
+        return getAllPCNameIdDto;
+    }
+
+    @Override
+    public void deleteProject(long projectId) {
+        projectRepository.deleteById(projectId);
     }
 }

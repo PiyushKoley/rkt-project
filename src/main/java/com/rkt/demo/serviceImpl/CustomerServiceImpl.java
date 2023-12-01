@@ -125,4 +125,10 @@ public class CustomerServiceImpl implements CustomerService {
         return CustomerConvertor.convertCustomerEntityToCustomerResponseDto(customerEntity);
     }
 
+    @Override
+    public void deleteCustomer(long customerCode) {
+        long customerId = customerCode - SOME_FIXED_VALUE;
+        customerRepository.deleteById(customerId);
+    }
+
 }

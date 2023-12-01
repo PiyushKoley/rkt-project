@@ -1,8 +1,6 @@
 package com.rkt.demo.advice;
 
-import com.rkt.demo.exception.EmailAlreadyInUserException;
-import com.rkt.demo.exception.TokenExpiresException;
-import com.rkt.demo.exception.TokenNotValidException;
+import com.rkt.demo.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,5 +50,20 @@ public class UserExceptionHandler {
 
         errorMap.put("errorMessage",ex.getMessage());
         return errorMap;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserNotPresentException.class)
+    public Map<String, String> handleUserNotPresentException(UserNotPresentException ex) {
+        Map<String,String> errorMap = new HashMap<>();
+
+        errorMap.put("errorMessage",ex.getMessage());
+        return errorMap;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MenuNotPresentException.class)
+    public String handleUserNotPresentException(MenuNotPresentException ex) {
+        return ex.getMessage();
     }
 }

@@ -19,4 +19,6 @@ public interface CustomerService {
     public PaginationResponseDto getCustomersWithPagination(int pageNumber, int pageSize);
 
     public CustomerResponseDto updateCustomer(CustomerUpdateDto customerUpdateDto);
+
+    public void deleteCustomer(long customerCode);
 }

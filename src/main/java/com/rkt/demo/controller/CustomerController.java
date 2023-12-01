@@ -45,4 +45,10 @@ public class CustomerController {
     public ResponseEntity<?> updateCustomer(@RequestBody() CustomerUpdateDto customerUpdateDto){
         return ResponseEntity.ok(customerService.updateCustomer(customerUpdateDto));
     }
+
+    @DeleteMapping("/delete/{customerCode}")
+    public ResponseEntity<?> deleteCustomer(@PathVariable("customerCode") long customerCode) {
+        customerService.deleteCustomer(customerCode);
+        return ResponseEntity.ok("Customer deleted successfully...");
+    }
 }

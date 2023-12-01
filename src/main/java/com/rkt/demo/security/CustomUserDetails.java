@@ -18,7 +18,9 @@ public class CustomUserDetails implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Set.of(new SimpleGrantedAuthority(userEntity.getRole().toString()));
+//        return Set.of(new SimpleGrantedAuthority(userEntity.getRole().toString()));
+
+        return null;
     }
 
     @Override
@@ -29,6 +31,9 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         return userEntity.getEmail();
+    }
+    public Long getUserId() {
+        return userEntity.getId();
     }
 
     @Override

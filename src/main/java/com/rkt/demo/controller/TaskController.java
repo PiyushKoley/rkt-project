@@ -20,8 +20,22 @@ public class TaskController {
         return ResponseEntity.ok("Task added");
     }
 
-    @GetMapping("/get-all-name-id")
-    public ResponseEntity<?> getAllProjectCustomerNameIdDto() {
-        return ResponseEntity.ok(taskService.getAllProjectCustomerNameIdDto());
+    @GetMapping("/get-projects-task/{projectId}")
+    public ResponseEntity<?> getAllTaskOfProject(@PathVariable("projectId") long projectId) {
+        return ResponseEntity.ok(taskService.getAllTaskOfProject(projectId));
+    }
+
+    @DeleteMapping("/delete/{taskId}")
+    public ResponseEntity<?> deleteTask(@PathVariable("taskId") long taskId) {
+        taskService.deleteTask(taskId);
+
+        return ResponseEntity.ok("Task deleted successfully...");
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateTask(@Valid @RequestBody() TaskDto taskDto) {
+        taskService.updateTask(taskDto);
+
+        return ResponseEntity.ok("Task updated successfully...");
     }
 }

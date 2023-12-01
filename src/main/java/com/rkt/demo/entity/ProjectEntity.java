@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,11 +21,12 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class ProjectEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String projectName;
     private String projectDescription;
@@ -41,11 +43,11 @@ public class ProjectEntity {
 
     @CreatedBy
     @Column(updatable = false,nullable = false)
-    private long createdByUser;
+    private Long createdByUser;
 
     @LastModifiedBy
     @Column(insertable = false)
-    private long updatedByUser;
+    private Long updatedByUser;
 
     @ManyToOne
     @JoinColumn

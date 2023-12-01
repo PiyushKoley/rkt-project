@@ -39,4 +39,15 @@ public class ProjectController {
         projectService.updateProject(projectUpdateDto);
         return ResponseEntity.ok("Project Updated...");
     }
+
+    @GetMapping("/get-all-name-id")
+    public ResponseEntity<?> getAllProjectCustomerNameIdDto() {
+        return ResponseEntity.ok(projectService.getAllProjectCustomerNameId());
+    }
+
+    @DeleteMapping("/delete/{projectId}")
+    public ResponseEntity<?> deleteProject(@PathVariable("projectId") long projectId) {
+        projectService.deleteProject(projectId);
+        return ResponseEntity.ok("project deleted successfully...");
+    }
 }
