@@ -1,7 +1,7 @@
-package com.rkt.app.mysql.repository;
+package com.rkt.app.repository;
 
-import com.rkt.app.mysql.entity.RefreshToken;
-import com.rkt.app.mysql.entity.UserEntity;
+import com.rkt.app.entity.RefreshToken;
+import com.rkt.app.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken,Long> {

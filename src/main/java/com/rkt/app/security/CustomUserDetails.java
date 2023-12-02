@@ -1,6 +1,6 @@
 package com.rkt.app.security;
 
-import com.rkt.app.mysql.entity.UserEntity;
+import com.rkt.app.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

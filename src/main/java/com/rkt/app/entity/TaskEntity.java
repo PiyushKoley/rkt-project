@@ -1,7 +1,6 @@
-package com.rkt.app.mysql.entity;
+package com.rkt.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rkt.app.enums.ProjectType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,50 +9,51 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
-@Table(name = "projects")
+@Table(name = "tasks")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class ProjectEntity {
-
+public class TaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String projectName;
-    private String projectDescription;
-    private String projectManager;
-    @Enumerated(EnumType.STRING)
-    private ProjectType projectType;
+    private String taskTitle;
+    private String taskStatus;
+    private LocalDate taskDeadline;
+    private String taskDescription;
+//    private long assigneeId;
+//    private String assigneeName;
 
     @CreationTimestamp
-    @Column(updatable = false,nullable = false)
-    private Date createdAt;
+    @Column(nullable = false,updatable = false)
+    private LocalDate createdAt;
+
     @UpdateTimestamp
     @Column(insertable = false)
     private Date updatedAt;
 
     @CreatedBy
-    @Column(updatable = false,nullable = false)
-    private Long createdByUser;
+    @Column(nullable = false,updatable = false)
+    private Long createdBy;
 
     @LastModifiedBy
     @Column(insertable = false)
-    private Long updatedByUser;
+    private Long updatedBy;
 
     @ManyToOne
     @JoinColumn
     @JsonIgnore
-    private CustomerEntity customerEntity;
+    private ProjectEntity projectEntity;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "projectEntity")
+    @ManyToOne
+    @JoinColumn
     @JsonIgnore
-    private Set<TaskEntity> taskEntitySet;
+    private UserEntity assignedUser;
 }

@@ -2,9 +2,9 @@ package com.rkt.app.serviceImpl;
 
 import com.rkt.app.dto.requestDto.UserDto;
 import com.rkt.app.dto.responseDto.UserNameIdDto;
-import com.rkt.app.mysql.entity.UserEntity;
+import com.rkt.app.entity.UserEntity;
 import com.rkt.app.exception.EmailAlreadyInUserException;
-import com.rkt.app.mysql.repository.UserRepository;
+import com.rkt.app.repository.UserRepository;
 import com.rkt.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

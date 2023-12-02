@@ -1,7 +1,7 @@
 package com.rkt.app.security;
 
-import com.rkt.app.mysql.entity.UserEntity;
-import com.rkt.app.mysql.repository.UserRepository;
+import com.rkt.app.entity.UserEntity;
+import com.rkt.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

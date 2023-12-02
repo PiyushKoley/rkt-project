@@ -2,11 +2,11 @@ package com.rkt.app.serviceImpl;
 
 import com.rkt.app.dto.requestDto.MenuDto;
 import com.rkt.app.dto.responseDto.MenuParentIdTitleDto;
-import com.rkt.app.mysql.entity.MenuChildEntity;
-import com.rkt.app.mysql.entity.MenuParentEntity;
+import com.rkt.app.entity.MenuChildEntity;
+import com.rkt.app.entity.MenuParentEntity;
 import com.rkt.app.exception.MenuNotPresentException;
-import com.rkt.app.mysql.repository.MenuChildRepository;
-import com.rkt.app.mysql.repository.MenuParentRepository;
+import com.rkt.app.repository.MenuChildRepository;
+import com.rkt.app.repository.MenuParentRepository;
 import com.rkt.app.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

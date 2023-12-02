@@ -1,4 +1,4 @@
-package com.rkt.app.mysql.entity;
+package com.rkt.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -1,11 +1,11 @@
 package com.rkt.app.serviceImpl;
 
-import com.rkt.app.mysql.entity.RefreshToken;
-import com.rkt.app.mysql.entity.UserEntity;
+import com.rkt.app.entity.RefreshToken;
+import com.rkt.app.entity.UserEntity;
 import com.rkt.app.exception.TokenExpiresException;
 import com.rkt.app.exception.TokenNotValidException;
-import com.rkt.app.mysql.repository.RefreshTokenRepository;
-import com.rkt.app.mysql.repository.UserRepository;
+import com.rkt.app.repository.RefreshTokenRepository;
+import com.rkt.app.repository.UserRepository;
 import com.rkt.app.security.JwtTokenGenerator;
 import com.rkt.app.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;

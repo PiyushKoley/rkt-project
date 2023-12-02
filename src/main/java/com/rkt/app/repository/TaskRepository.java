@@ -1,6 +1,6 @@
-package com.rkt.app.mysql.repository;
+package com.rkt.app.repository;
 
-import com.rkt.app.mysql.entity.TaskEntity;
+import com.rkt.app.entity.TaskEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

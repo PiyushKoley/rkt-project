@@ -1,9 +1,9 @@
 package com.rkt.app.convertor;
 
 import com.rkt.app.dto.responseDto.TaskResponseDto;
-import com.rkt.app.mysql.entity.ProjectEntity;
-import com.rkt.app.mysql.entity.TaskEntity;
-import com.rkt.app.mysql.entity.UserEntity;
+import com.rkt.app.entity.ProjectEntity;
+import com.rkt.app.entity.TaskEntity;
+import com.rkt.app.entity.UserEntity;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

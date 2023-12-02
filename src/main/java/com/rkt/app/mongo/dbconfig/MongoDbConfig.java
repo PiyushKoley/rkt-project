@@ -37,9 +37,9 @@
 //        DriverManagerDataSource dataSource = new DriverManagerDataSource();
 //
 //        dataSource.setUrl(environment.getProperty("mongo.spring.datasource.url"));
-//        dataSource.setUsername(environment.getProperty("mongo.spring.datasource.username"));
-//        dataSource.setPassword(environment.getProperty("mongo.spring.datasource.password"));
-//        dataSource.setDriverClassName(environment.getProperty("mongo.spring.datasource.driver-class-name"));
+////        dataSource.setUsername(environment.getProperty("mongo.spring.datasource.port"));
+////        dataSource.setPassword(environment.getProperty("mongo.spring.datasource.database"));
+////        dataSource.setDriverClassName(environment.getProperty("mongo.spring.datasource.driver-class-name"));
 //
 //
 //        return dataSource;

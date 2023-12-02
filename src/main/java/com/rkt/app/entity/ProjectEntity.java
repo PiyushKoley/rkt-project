@@ -1,6 +1,7 @@
-package com.rkt.app.mysql.entity;
+package com.rkt.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rkt.app.enums.ProjectType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,51 +10,50 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
-@Table(name = "tasks")
+@Table(name = "projects")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class TaskEntity {
+public class ProjectEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String taskTitle;
-    private String taskStatus;
-    private LocalDate taskDeadline;
-    private String taskDescription;
-//    private long assigneeId;
-//    private String assigneeName;
+
+    private String projectName;
+    private String projectDescription;
+    private String projectManager;
+    @Enumerated(EnumType.STRING)
+    private ProjectType projectType;
 
     @CreationTimestamp
-    @Column(nullable = false,updatable = false)
-    private LocalDate createdAt;
-
+    @Column(updatable = false,nullable = false)
+    private Date createdAt;
     @UpdateTimestamp
     @Column(insertable = false)
     private Date updatedAt;
 
     @CreatedBy
-    @Column(nullable = false,updatable = false)
-    private Long createdBy;
+    @Column(updatable = false,nullable = false)
+    private Long createdByUser;
 
     @LastModifiedBy
     @Column(insertable = false)
-    private Long updatedBy;
+    private Long updatedByUser;
 
     @ManyToOne
     @JoinColumn
     @JsonIgnore
-    private ProjectEntity projectEntity;
+    private CustomerEntity customerEntity;
 
-    @ManyToOne
-    @JoinColumn
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "projectEntity")
     @JsonIgnore
-    private UserEntity assignedUser;
+    private Set<TaskEntity> taskEntitySet;
 }

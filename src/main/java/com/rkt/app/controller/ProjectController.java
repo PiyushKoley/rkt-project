@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/app")
+@RequestMapping("/project")
 public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
 
-    @PostMapping("/add-app")
+    @PostMapping("/add-project")
     public ResponseEntity<?> addNewProject(@Valid @RequestBody()ProjectDto projectDto) {
         projectService.addNewProject(projectDto);
 
@@ -34,7 +34,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getProjectsWithPagination(pageNumber, pageSize));
     }
 
-    @PutMapping("/update-app")
+    @PutMapping("/update-project")
     public ResponseEntity<?> updateProject(@RequestBody() ProjectUpdateDto projectUpdateDto){
         projectService.updateProject(projectUpdateDto);
         return ResponseEntity.ok("Project Updated...");

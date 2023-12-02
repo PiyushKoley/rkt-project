@@ -1,17 +1,18 @@
-package com.rkt.app.mysql.entity;
+package com.rkt.app.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
-@Table(name = "menu_child")
+@Table(name = "menu_parents")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class MenuChildEntity {
+public class MenuParentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +22,7 @@ public class MenuChildEntity {
     private String path;
     private String icon;
 
-    @ManyToOne
-    @JoinColumn
-    @JsonIgnore
-    private MenuParentEntity parentMenu;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "parentMenu")
+//    @JsonIgnore
+    private List<MenuChildEntity> childMenuOptionList;
 }
