@@ -19,11 +19,10 @@ import java.util.List;
 public class Node {
 
     @Id
-    private String id; // have to
+    private String id; // will create UUID for every node...
     private String title;
     private String path;
     private String icon;
-//    private int presentInParentIndex;
 
     private List<Node> children;
 }

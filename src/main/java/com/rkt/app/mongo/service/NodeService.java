@@ -4,14 +4,19 @@ import com.rkt.app.dto.requestDto.MenuDto;
 import com.rkt.app.mongo.dto.NodeDto;
 import com.rkt.app.mongo.dto.NodeUpdateDto;
 import com.rkt.app.mongo.entity.Node;
+import com.rkt.app.mongo.entity.NodePath;
+
+import java.util.List;
 
 public interface NodeService {
 
-    public void addNode(NodeDto nodeDto);
+    void addNode(NodeDto nodeDto);
 
-    public void updateNode(NodeUpdateDto menuUpdateDto);
+    void updateNode(NodeUpdateDto menuUpdateDto);
 
-    public Node getAllNodes();
+    List<Node> getAllNodes();
 
-    public void deleteNode(String nodeId);
+    void deleteNode(String nodeId);
+
+    List<NodePath> getAllNameId();
 }

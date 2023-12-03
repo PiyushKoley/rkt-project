@@ -1,7 +1,7 @@
 package com.rkt.app.mongo.serviceImpl;
 
-import com.rkt.app.dto.requestDto.MenuDto;
 import com.rkt.app.mongo.datastructure.NaryTree;
+import com.rkt.app.mongo.datastructure.NodeNotFoundException;
 import com.rkt.app.mongo.dto.NodeDto;
 import com.rkt.app.mongo.dto.NodeUpdateDto;
 import com.rkt.app.mongo.entity.Node;
@@ -12,10 +12,7 @@ import com.rkt.app.mongo.service.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class NodeServiceImpl implements NodeService {
@@ -29,69 +26,109 @@ public class NodeServiceImpl implements NodeService {
     @Autowired
     private NodeRepository nodeRepository;
 
-    private final String PATH_MAP_ID = "path_map";
     private final String FINAL_TREE_ID = "nary_tree";
 
     @Override
     public void addNode(NodeDto nodeDto) {
+        Node dummyRootNode = getDummyHeadNode();
 
+        String newNodeId = UUID.randomUUID().toString();
+
+        Node newNode = Node.builder()
+                .id(newNodeId)
+                .path(nodeDto.getPath())
+                .icon(nodeDto.getIcon())
+                .title(nodeDto.getTitle())
+                .children(new ArrayList<>())
+                .build();
+
+        Node root = naryTree.addNewNode(newNode, dummyRootNode,nodeDto.getParentId());
+
+        saveTreeToDatabase(root);
+        saveNodeData(newNodeId,newNode);
     }
 
     @Override
     public void updateNode(NodeUpdateDto menuUpdateDto) {
+        Node dummyRootNode = getDummyHeadNode();
+        Node root = naryTree.updateExistingNode(menuUpdateDto,dummyRootNode);
+
+        saveTreeToDatabase(root);
+        Node node = Node.builder()
+                .id(menuUpdateDto.getId())
+                .title(menuUpdateDto.getTitle())
+                .path(menuUpdateDto.getPath())
+                .icon(menuUpdateDto.getIcon())
+                .build();
+
+        saveNodeData(menuUpdateDto.getId(), node);
 
     }
 
     @Override
-    public Node getAllNodes() {
+    public List<Node> getAllNodes() {
+        Node dummyHeadNode = getDummyHeadNode();
+        return dummyHeadNode.getChildren();
+    }
+    @Override
+    public List<NodePath> getAllNameId() {
 
+        return nodePathRepository.findAll();
 
-        return null;
     }
 
     @Override
     public void deleteNode(String nodeId) {
+        Node root = getDummyHeadNode();
+
+        List<Node> result = naryTree.deleteNode(root,nodeId);
+        //result[0] => root ,,,,result[1] => deletedNode=====>>> we have to delete these nodes from NodePath repository...
+
+        root = result.get(0);
+
+        saveTreeToDatabase(root);
+
+        Node deletedNode = result.get(1);
+        // TODO:======================**********======
+        // have to write function to delete all node from node path repo....
+
+
 
     }
 
-    private boolean isFinalTreePresent() {
-        return nodeRepository.count() > 0;
-    }
+    //===================================================================================
 
-    private boolean isPathMapPresent() {
-        return nodePathRepository.count() > 0;
-    }
-
-    private Node getTreeFromDatabase() {
+    private Node getDummyHeadNode() {
         return nodeRepository.findById(FINAL_TREE_ID)
-                .orElse(
-                        Node.builder()
-                                .title("dummyHeadNode")
-                                .children(new ArrayList<>())
-                                .build()
-                );
+                .orElseGet(this::createDummyNodeAndSaveToDb);
 
     }
 
-    private void saveTreeToDatabase(Node dummyHeadNode) {
+    private Node saveTreeToDatabase(Node dummyHeadNode) {
         dummyHeadNode.setId(FINAL_TREE_ID);
-        nodeRepository.save(dummyHeadNode);
+        return nodeRepository.save(dummyHeadNode);
     }
 
-    private Map<String, List<?>> getPathMapOfAllNode() {
+    //================================================
+    // this will only run for first time to create dummy root node....
+    private Node createDummyNodeAndSaveToDb() {
+        Node node = Node.builder()
+                .title("dummyHeadNode")
+                .children(new ArrayList<>())
+                .build();
 
-        NodePath nodePath = nodePathRepository.findById(PATH_MAP_ID)
-                .orElse(
-                        NodePath.builder()
-                                .mapOfEveryNodePath(new HashMap<>())
-                                .build()
-                );
-
-        return nodePath.getMapOfEveryNodePath();
+        return saveTreeToDatabase(node);
     }
 
-    private void SavePathMapOfAllNode() {
+    //=======================================================
 
+    private void saveNodeData(String nodeId, Node node) {
+        node.setChildren(null);
+        NodePath data = NodePath.builder()
+                .id(nodeId)
+                .nodeData(node)
+                .build();
+        nodePathRepository.save(data);
     }
 
 }

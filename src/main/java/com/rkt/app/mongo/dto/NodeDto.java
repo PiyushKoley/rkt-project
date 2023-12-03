@@ -12,5 +12,5 @@ public class NodeDto {
     private String title;
     private String path;
     private String icon;
-    private long parentId;
+    private String parentId;
 }

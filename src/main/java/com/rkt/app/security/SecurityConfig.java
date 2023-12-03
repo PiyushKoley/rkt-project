@@ -71,7 +71,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests( auth ->
-                        auth.requestMatchers("/user/signup","/user/login", "/user/refresh-token").permitAll()
+                        auth.requestMatchers("/user/signup","/user/login", "/user/refresh-token","/menu-view/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))

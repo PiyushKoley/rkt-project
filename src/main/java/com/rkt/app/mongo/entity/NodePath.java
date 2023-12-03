@@ -14,13 +14,13 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "every_node_path_map")
+@Document(collection = "node_data")
 @Builder
 public class NodePath {
 
     @Id
-    private String id; // have to hard code this value otherwise it will generate a random string....
+    private String id;
 
-    private Map<String, List<?>> mapOfEveryNodePath;
+    private Node nodeData;
 
 }
