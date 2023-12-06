@@ -45,7 +45,7 @@ public class NodeServiceImpl implements NodeService {
         Node root = naryTree.addNewNode(newNode, dummyRootNode,nodeDto.getParentId());
 
         saveTreeToDatabase(root);
-        saveNodeData(newNodeId,newNode);
+        saveNodeData(newNode);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class NodeServiceImpl implements NodeService {
                 .icon(menuUpdateDto.getIcon())
                 .build();
 
-        saveNodeData(menuUpdateDto.getId(), node);
+        saveNodeData(node);
 
     }
 
@@ -92,12 +92,31 @@ public class NodeServiceImpl implements NodeService {
         // TODO:======================**********======
         // have to write function to delete all node from node path repo....
 
-
+        deleteNodesFromNodePathRepository(deletedNode);
 
     }
 
     //===================================================================================
 
+    // *************************** delete nodes details from node path repo *********************
+    private void deleteNodesFromNodePathRepository(Node deletedNode) {
+        List<String> listOfDeletedNodesId = new ArrayList<>();
+
+        createListOfDeletedId(deletedNode,listOfDeletedNodesId);
+
+        nodePathRepository.deleteAllById(listOfDeletedNodesId);
+    }
+    private void createListOfDeletedId(Node root, List<String> listOfDeletedNodeId) {
+
+        listOfDeletedNodeId.add(root.getId());
+        List<Node> nodeList = root.getChildren();
+
+        for(Node node : nodeList) {
+            createListOfDeletedId(node,listOfDeletedNodeId);
+        }
+    }
+
+    //*****************************************************************************************************
     private Node getDummyHeadNode() {
         return nodeRepository.findById(FINAL_TREE_ID)
                 .orElseGet(this::createDummyNodeAndSaveToDb);
@@ -122,11 +141,13 @@ public class NodeServiceImpl implements NodeService {
 
     //=======================================================
 
-    private void saveNodeData(String nodeId, Node node) {
-        node.setChildren(null);
+    private void saveNodeData( Node node) {
+//        node.setChildren(null);
         NodePath data = NodePath.builder()
-                .id(nodeId)
-                .nodeData(node)
+                .id(node.getId())
+                .path(node.getPath())
+                .title(node.getTitle())
+                .icon(node.getIcon())
                 .build();
         nodePathRepository.save(data);
     }

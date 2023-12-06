@@ -5,6 +5,7 @@ import com.rkt.app.dto.requestDto.RefreshTokenDto;
 import com.rkt.app.dto.requestDto.UserDto;
 import com.rkt.app.dto.responseDto.LoginResponseDto;
 import com.rkt.app.exception.EmailAlreadyInUserException;
+import com.rkt.app.security.CustomUserDetails;
 import com.rkt.app.security.JwtTokenGenerator;
 import com.rkt.app.service.RefreshTokenService;
 import com.rkt.app.service.UserService;
@@ -21,6 +22,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Date;
 
 @RestController
@@ -97,5 +99,15 @@ public class UserController {
     @GetMapping("/get-all")
     public ResponseEntity<?> getAllUserNameIdDto(){
         return ResponseEntity.ok(userService.getAllUserNameId());
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+
+        return ResponseEntity.ok(userDetails.getUsername());
     }
 }

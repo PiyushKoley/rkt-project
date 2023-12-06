@@ -21,6 +21,8 @@ public class NodePath {
     @Id
     private String id;
 
-    private Node nodeData;
+    private String title;
+    private String path;
+    private String icon;
 
 }
