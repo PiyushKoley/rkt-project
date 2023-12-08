@@ -1,7 +1,7 @@
 package com.rkt.app.controller;
 
-import com.rkt.app.dto.requestDto.ProjectDto;
-import com.rkt.app.dto.requestDto.ProjectUpdateDto;
+import com.rkt.app.dto.requestDto.project.ProjectDto;
+import com.rkt.app.dto.requestDto.project.ProjectUpdateDto;
 import com.rkt.app.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +49,19 @@ public class ProjectController {
     public ResponseEntity<?> deleteProject(@PathVariable("projectId") long projectId) {
         projectService.deleteProject(projectId);
         return ResponseEntity.ok("app deleted successfully...");
+    }
+
+    @PostMapping("/link-user")
+    public ResponseEntity<?> linkAUserToProject(@RequestParam("userId") long userId,
+                                                @RequestParam("projectId") long projectId ) {
+
+        projectService.linkUserToProject(userId,projectId);
+
+        return ResponseEntity.ok("user is linked to project successfully...");
+    }
+
+    @GetMapping("/get-all-date-task-count")
+    public ResponseEntity<?> getAllDateTaskCount(@RequestParam("projectId") long projectId) {
+        return ResponseEntity.ok(projectService.getAllDateTaskCount(projectId));
     }
 }

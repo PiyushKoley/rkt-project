@@ -1,7 +1,7 @@
 package com.rkt.app.controller;
 
-import com.rkt.app.dto.requestDto.CustomerDto;
-import com.rkt.app.dto.requestDto.CustomerUpdateDto;
+import com.rkt.app.dto.requestDto.customer.CustomerDto;
+import com.rkt.app.dto.requestDto.customer.CustomerUpdateDto;
 import com.rkt.app.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

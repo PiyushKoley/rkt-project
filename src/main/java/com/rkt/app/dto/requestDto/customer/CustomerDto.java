@@ -1,4 +1,4 @@
-package com.rkt.app.dto.requestDto;
+package com.rkt.app.dto.requestDto.customer;
 
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;

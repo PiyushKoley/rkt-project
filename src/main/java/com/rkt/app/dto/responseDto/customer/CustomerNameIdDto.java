@@ -1,4 +1,4 @@
-package com.rkt.app.dto.responseDto;
+package com.rkt.app.dto.responseDto.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LoginResponseDto {
+public class CustomerNameIdDto {
 
-    private String accessToken;
-    private String token;
+    private String customerName;
+    private long customerCode;
 }

@@ -25,15 +25,10 @@ public class TaskEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String taskTitle;
-    private String taskStatus;
-    private LocalDate taskDeadline;
     private String taskDescription;
-//    private long assigneeId;
-//    private String assigneeName;
 
-    @CreationTimestamp
     @Column(nullable = false,updatable = false)
-    private LocalDate createdAt;
+    private LocalDate taskDate; // this field we will get from front-end...
 
     @UpdateTimestamp
     @Column(insertable = false)

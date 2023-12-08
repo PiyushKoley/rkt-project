@@ -1,4 +1,4 @@
-package com.rkt.app.dto.responseDto;
+package com.rkt.app.dto.responseDto.project;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

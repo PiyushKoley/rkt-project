@@ -1,12 +1,15 @@
 package com.rkt.app.service;
 
-import com.rkt.app.dto.requestDto.ProjectDto;
-import com.rkt.app.dto.requestDto.ProjectUpdateDto;
-import com.rkt.app.dto.responseDto.PaginationResponseDto;
-import com.rkt.app.dto.responseDto.ProjectCustomerNameIdDto;
-import com.rkt.app.dto.responseDto.ProjectResponseDto;
+import com.rkt.app.dto.requestDto.project.ProjectDto;
+import com.rkt.app.dto.requestDto.project.ProjectUpdateDto;
+import com.rkt.app.dto.responseDto.project.PaginationResponseDto;
+import com.rkt.app.dto.responseDto.project.ProjectCustomerNameIdDto;
+import com.rkt.app.dto.responseDto.project.ProjectResponseDto;
+import com.rkt.app.dto.responseDto.task.TaskDateCountDto;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface ProjectService {
 
@@ -21,5 +24,7 @@ public interface ProjectService {
     public List<ProjectCustomerNameIdDto> getAllProjectCustomerNameId();
 
     void deleteProject(long projectId);
+    void linkUserToProject(long userId, long projectId);
 
+    List<TaskDateCountDto> getAllDateTaskCount(long projectId);
 }

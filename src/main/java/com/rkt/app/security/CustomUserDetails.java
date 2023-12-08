@@ -15,7 +15,7 @@ public class CustomUserDetails implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return Set.of(new SimpleGrantedAuthority(userEntity.getRole().toString()));
+//        return Set.of(new SimpleGrantedAuthority(/*userEntity.getRole().toString()*/));
 
         return null;
     }
@@ -32,6 +32,10 @@ public class CustomUserDetails implements UserDetails {
     public Long getUserId() {
         return userEntity.getId();
     }
+
+//    public UserEntity getUserEntity() {
+//        return userEntity;
+//    }
 
     @Override
     public boolean isAccountNonExpired() {

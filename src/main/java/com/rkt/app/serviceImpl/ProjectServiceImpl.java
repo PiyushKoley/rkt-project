@@ -2,18 +2,23 @@ package com.rkt.app.serviceImpl;
 
 import com.rkt.app.convertor.CustomerConvertor;
 import com.rkt.app.convertor.ProjectConvertor;
-import com.rkt.app.dto.requestDto.ProjectDto;
-import com.rkt.app.dto.requestDto.ProjectUpdateDto;
-import com.rkt.app.dto.responseDto.PaginationResponseDto;
-import com.rkt.app.dto.responseDto.ProjectCustomerNameIdDto;
-import com.rkt.app.dto.responseDto.ProjectResponseDto;
+import com.rkt.app.dto.requestDto.project.ProjectDto;
+import com.rkt.app.dto.requestDto.project.ProjectUpdateDto;
+import com.rkt.app.dto.responseDto.project.PaginationResponseDto;
+import com.rkt.app.dto.responseDto.project.ProjectCustomerNameIdDto;
+import com.rkt.app.dto.responseDto.project.ProjectResponseDto;
+import com.rkt.app.dto.responseDto.task.TaskDateCountDto;
 import com.rkt.app.entity.CustomerEntity;
 import com.rkt.app.entity.ProjectEntity;
+import com.rkt.app.entity.TaskEntity;
+import com.rkt.app.entity.UserEntity;
 import com.rkt.app.enums.ProjectType;
 import com.rkt.app.exception.CustomerNotPresentException;
 import com.rkt.app.exception.ProjectNotPresentException;
+import com.rkt.app.exception.UserNotPresentException;
 import com.rkt.app.repository.CustomerRepository;
 import com.rkt.app.repository.ProjectRepository;
+import com.rkt.app.repository.UserRepository;
 import com.rkt.app.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,10 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +38,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public void addNewProject(ProjectDto projectDto) {
@@ -146,4 +152,56 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProject(long projectId) {
         projectRepository.deleteById(projectId);
     }
+
+    @Override
+    public void linkUserToProject(long userId,long projectId) {
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(()-> new ProjectNotPresentException("project does not exist"));
+
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotPresentException("user does not exist"));
+        //========================= we set user to a project =========================================
+
+        var setOfUsers = projectEntity.getAssignedUsers();
+
+        setOfUsers.add(userEntity);
+        projectEntity.setAssignedUsers(setOfUsers);
+        //=========================== we set a project to the user ===================================
+        var setOfProjects = userEntity.getProjectEntitySet();
+
+        setOfProjects.add(projectEntity);
+        userEntity.setProjectEntitySet(setOfProjects);
+
+        //==============================================================
+
+        userRepository.save(userEntity);
+        projectRepository.save(projectEntity);
+    }
+
+    @Override
+    public List<TaskDateCountDto> getAllDateTaskCount(long projectId) {
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(
+                        () -> new ProjectNotPresentException("project with project id : "+ projectId +" is not present")
+                );
+
+        Map<LocalDate,Integer> mapOfDateTaskCount = new HashMap<>();
+        Set<TaskEntity> taskEntitySet = projectEntity.getTaskEntitySet();
+
+        taskEntitySet.forEach((taskEntity) -> {
+            LocalDate date = taskEntity.getTaskDate();
+            mapOfDateTaskCount.put(date, mapOfDateTaskCount.getOrDefault(date,0) + 1);
+        });
+
+        return mapOfDateTaskCount.keySet().stream()
+                .map(
+                        (key) -> TaskDateCountDto.builder()
+                        .date(key.toString())
+                        .count(mapOfDateTaskCount.get(key))
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+    }
 }
+

@@ -1,4 +1,4 @@
-package com.rkt.app.dto.responseDto;
+package com.rkt.app.dto.responseDto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.rkt.app.dto.requestDto;
+package com.rkt.app.dto.requestDto.task;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -9,17 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskDto {
-    private long taskId;
     @NotBlank
     private String taskTitle;
-//    @NotBlank
+    @NotBlank
     private String projectId;
-    @NotBlank
-    private String taskStatus;
-    @NotBlank
-    private String taskDeadline;
     @NotBlank
     private String taskDescription;
 
-    private long userId;
 }

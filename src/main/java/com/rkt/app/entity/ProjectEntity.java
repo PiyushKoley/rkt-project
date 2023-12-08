@@ -1,5 +1,6 @@
 package com.rkt.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rkt.app.enums.ProjectType;
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -56,4 +58,9 @@ public class ProjectEntity {
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "projectEntity")
     @JsonIgnore
     private Set<TaskEntity> taskEntitySet;
+
+    @ManyToMany(cascade = CascadeType.ALL,mappedBy = "projectEntitySet")
+    @JsonBackReference
+    @JsonIgnore
+    private Set<UserEntity> assignedUsers;
 }

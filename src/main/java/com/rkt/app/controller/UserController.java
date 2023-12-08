@@ -1,9 +1,9 @@
 package com.rkt.app.controller;
 
-import com.rkt.app.dto.requestDto.LoginDto;
-import com.rkt.app.dto.requestDto.RefreshTokenDto;
-import com.rkt.app.dto.requestDto.UserDto;
-import com.rkt.app.dto.responseDto.LoginResponseDto;
+import com.rkt.app.dto.requestDto.user.LoginDto;
+import com.rkt.app.dto.requestDto.user.RefreshTokenDto;
+import com.rkt.app.dto.requestDto.user.UserDto;
+import com.rkt.app.dto.responseDto.user.LoginResponseDto;
 import com.rkt.app.exception.EmailAlreadyInUserException;
 import com.rkt.app.security.CustomUserDetails;
 import com.rkt.app.security.JwtTokenGenerator;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -96,11 +97,14 @@ public class UserController {
         return ResponseEntity.ok(loginResponseDto);
     }
 
+    // ====================== admin will user this api ==========================
     @GetMapping("/get-all")
+//    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> getAllUserNameIdDto(){
         return ResponseEntity.ok(userService.getAllUserNameId());
     }
 
+    //========================================================================
     @GetMapping("/info")
     public ResponseEntity<?> getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -109,5 +113,11 @@ public class UserController {
 
 
         return ResponseEntity.ok(userDetails.getUsername());
+    }
+
+    @GetMapping("/get-projects")
+    public ResponseEntity<?> getAllProjectOfUser() {
+
+        return ResponseEntity.ok(userService.getAllProjectOfUser());
     }
 }

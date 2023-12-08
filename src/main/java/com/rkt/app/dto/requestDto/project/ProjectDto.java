@@ -1,4 +1,4 @@
-package com.rkt.app.dto.requestDto;
+package com.rkt.app.dto.requestDto.project;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

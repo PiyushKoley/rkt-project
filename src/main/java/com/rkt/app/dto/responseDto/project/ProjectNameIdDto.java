@@ -1,4 +1,4 @@
-package com.rkt.app.dto.responseDto;
+package com.rkt.app.dto.responseDto.project;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CustomerNameIdDto {
+public class ProjectNameIdDto {
 
-    private String customerName;
-    private long customerCode;
+    private long projectId;
+    private String projectName;
 }

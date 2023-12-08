@@ -1,8 +1,8 @@
 package com.rkt.app.serviceImpl;
 
-import com.rkt.app.convertor.TaskConvertor;
-import com.rkt.app.dto.requestDto.TaskDto;
-import com.rkt.app.dto.responseDto.TaskResponseDto;
+//import com.rkt.app.convertor.TaskConvertor;
+import com.rkt.app.dto.requestDto.task.TaskDto;
+import com.rkt.app.dto.requestDto.task.TaskUpdateDto;
 import com.rkt.app.entity.ProjectEntity;
 import com.rkt.app.entity.TaskEntity;
 import com.rkt.app.entity.UserEntity;
@@ -11,13 +11,14 @@ import com.rkt.app.exception.UserNotPresentException;
 import com.rkt.app.repository.ProjectRepository;
 import com.rkt.app.repository.TaskRepository;
 import com.rkt.app.repository.UserRepository;
+import com.rkt.app.security.CustomUserDetails;
 import com.rkt.app.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -38,7 +39,6 @@ public class TaskServiceImpl implements TaskService {
     public void addNewTask(TaskDto taskDto) {
 
 
-
         long projectId= Long.parseLong(taskDto.getProjectId());
 
 
@@ -47,24 +47,18 @@ public class TaskServiceImpl implements TaskService {
                         String.format("Project with app id : %s not present.",projectId)
                 )
         );
-        UserEntity userEntity = userRepository.findById(taskDto.getUserId())
-                .orElseThrow(
-                    () -> new UserNotPresentException(
-                            String.format("user with user Id : %s not present",taskDto.getUserId())
-                    )
-                );
+
+        UserEntity userEntity = getUserFromSecurityContext();
 
 
         TaskEntity taskEntity = TaskEntity.builder()
                 .taskTitle(taskDto.getTaskTitle())
-                .taskStatus(taskDto.getTaskStatus())
-                .taskDeadline(LocalDate.parse(taskDto.getTaskDeadline()))
                 .taskDescription(taskDto.getTaskDescription())
                 .projectEntity(projectEntity)
                 .assignedUser(userEntity)
                 .build();
 
-        //=================Mapping task to app=====================
+        //=================Mapping task to project=====================
 
         Set<TaskEntity> setOfTasks = projectEntity.getTaskEntitySet();
 
@@ -75,9 +69,9 @@ public class TaskServiceImpl implements TaskService {
         taskEntity = taskRepository.save(taskEntity);
 
         //================== Mapping task to user=========================
-//        Set<TaskEntity> assignedTaskToUser = userEntity.getSetOfTaskAssigned();
-//        assignedTaskToUser.add(taskEntity);
-//        userEntity.setSetOfTaskAssigned(assignedTaskToUser);
+        Set<TaskEntity> assignedTaskToUser = userEntity.getSetOfTask();
+        assignedTaskToUser.add(taskEntity);
+        userEntity.setSetOfTask(assignedTaskToUser);
         userRepository.save(userEntity);
         //===============================================================
 
@@ -86,92 +80,22 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void deleteTask(long taskId) {
-        taskRepository.deleteById(taskId);
-    }
-
-    @Override
-    public List<TaskResponseDto> getAllTaskOfProject(long projectId) {
-        List<TaskEntity> listOfTask = taskRepository.findByProjectEntity_Id(projectId);
-
-
-        return listOfTask.stream()
-                .filter(Objects::nonNull)
-                .map(this::getAllFieldsOfTaskResponseDtoFromEntity)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void updateTask(TaskDto taskDto) {
-        long taskId = taskDto.getTaskId();
-        TaskEntity taskEntity = taskRepository.findById(taskId)
-                    .orElseThrow(
-                    () -> new ProjectNotPresentException(String.format("Task with task Id: %s is not present",taskId))
-            );
-
-        taskEntity.setTaskDeadline(LocalDate.parse(taskDto.getTaskDeadline()));
-        taskEntity.setTaskDescription(taskDto.getTaskDescription());
-        taskEntity.setTaskStatus(taskDto.getTaskStatus());
-        taskEntity.setTaskTitle(taskDto.getTaskTitle());
-
-        long previousAssigneeId = taskEntity.getAssignedUser().getId();
-        long currentAssigneeId = taskDto.getUserId();
-
-        if(previousAssigneeId != currentAssigneeId) {
-            taskEntity = changeTaskAssignee(taskEntity,currentAssigneeId);
-        }
-
-        taskRepository.save(taskEntity);
+    public void updateTask(TaskUpdateDto taskUpdateDto) {
 
     }
 
-    private TaskEntity changeTaskAssignee(TaskEntity taskEntity, long currentAssigneeId) {
+    private UserEntity getUserFromSecurityContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        UserEntity currentAssignee = userRepository.findById(currentAssigneeId)
-            .orElseThrow(
-                    () -> new UserNotPresentException(String.format("user with user Id : %s  not present",currentAssigneeId))
-            );
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        long userId =  customUserDetails.getUserId();
 
-        // ===================== removing previous assignee ================
-//        UserEntity previousAssignee = taskEntity.getAssignedUser();
-//        Set<TaskEntity>setOfAssignedTask = previousAssignee.getSetOfTaskAssigned();
-//
-//        setOfAssignedTask.remove(taskEntity);
-//
-//        previousAssignee.setSetOfTaskAssigned(setOfAssignedTask);
-//
-//        userRepository.save(previousAssignee);
-        //=================================================================
-
-        // adding new assignee....
-
-        taskEntity.setAssignedUser(currentAssignee);
-//        Set<TaskEntity> assignedTask = currentAssignee.getSetOfTaskAssigned();
-//        assignedTask.add(taskEntity);
-//        currentAssignee.setSetOfTaskAssigned(assignedTask);
-
-//        userRepository.save(currentAssignee);
-
-        return taskEntity;
-
-    }
-
-    private TaskResponseDto getAllFieldsOfTaskResponseDtoFromEntity(TaskEntity taskEntity) {
-
-        TaskResponseDto taskResponseDto = TaskConvertor.convertEntityToResponseDto(taskEntity);
-
-        String createdBy = userRepository.getNameOfUser(taskEntity.getCreatedBy());
-        taskResponseDto.setCreateByUserName(createdBy);
-
-        if(taskEntity.getUpdatedBy() != null) {
-            String updatedBy = userRepository.getNameOfUser(taskEntity.getUpdatedBy());
-            taskResponseDto.setUpdatedByUserName(updatedBy);
-            taskResponseDto.setUpdatedByUserId(taskEntity.getUpdatedBy());
-        }
-
-
-        return taskResponseDto;
-
+        return userRepository.findById(userId)
+                .orElseThrow(
+                        () -> new UserNotPresentException(
+                                String.format("user with user Id : %s not present",userId)
+                        )
+                );
     }
 
 

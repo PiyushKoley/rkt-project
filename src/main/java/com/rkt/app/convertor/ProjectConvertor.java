@@ -1,6 +1,6 @@
 package com.rkt.app.convertor;
 
-import com.rkt.app.dto.responseDto.ProjectResponseDto;
+import com.rkt.app.dto.responseDto.project.ProjectResponseDto;
 import com.rkt.app.entity.CustomerEntity;
 import com.rkt.app.entity.ProjectEntity;
 import lombok.experimental.UtilityClass;

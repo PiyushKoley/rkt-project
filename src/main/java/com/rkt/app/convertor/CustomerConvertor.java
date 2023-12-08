@@ -1,7 +1,7 @@
 package com.rkt.app.convertor;
 
-import com.rkt.app.dto.responseDto.CustomerNameIdDto;
-import com.rkt.app.dto.responseDto.CustomerResponseDto;
+import com.rkt.app.dto.responseDto.customer.CustomerNameIdDto;
+import com.rkt.app.dto.responseDto.customer.CustomerResponseDto;
 import com.rkt.app.entity.CustomerEntity;
 import lombok.experimental.UtilityClass;
 
