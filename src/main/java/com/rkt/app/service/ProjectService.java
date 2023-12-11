@@ -27,4 +27,6 @@ public interface ProjectService {
     void linkUserToProject(long userId, long projectId);
 
     List<TaskDateCountDto> getAllDateTaskCount(long projectId);
+
+    List<?> getAllProjectUsers(long projectId);
 }

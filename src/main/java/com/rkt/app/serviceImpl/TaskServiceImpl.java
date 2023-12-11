@@ -1,8 +1,10 @@
 package com.rkt.app.serviceImpl;
 
 //import com.rkt.app.convertor.TaskConvertor;
+
 import com.rkt.app.dto.requestDto.task.TaskDto;
 import com.rkt.app.dto.requestDto.task.TaskUpdateDto;
+import com.rkt.app.dto.responseDto.task.TaskResponseDto;
 import com.rkt.app.entity.ProjectEntity;
 import com.rkt.app.entity.TaskEntity;
 import com.rkt.app.entity.UserEntity;
@@ -14,11 +16,15 @@ import com.rkt.app.repository.UserRepository;
 import com.rkt.app.security.CustomUserDetails;
 import com.rkt.app.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.config.Task;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -31,20 +37,17 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private UserRepository userRepository;
 
-//    @Autowired
-//    private CustomerRepository customerRepository;
-
 
     @Override
     public void addNewTask(TaskDto taskDto) {
 
 
-        long projectId= Long.parseLong(taskDto.getProjectId());
+        long projectId = Long.parseLong(taskDto.getProjectId());
 
 
         ProjectEntity projectEntity = projectRepository.findById(projectId).orElseThrow(
                 () -> new ProjectNotPresentException(
-                        String.format("Project with app id : %s not present.",projectId)
+                        String.format("Project with app id : %s not present.", projectId)
                 )
         );
 
@@ -54,6 +57,8 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity taskEntity = TaskEntity.builder()
                 .taskTitle(taskDto.getTaskTitle())
                 .taskDescription(taskDto.getTaskDescription())
+                .taskDate(LocalDate.parse(taskDto.getTaskDate()))
+                .minutes(taskDto.getMinutes())
                 .projectEntity(projectEntity)
                 .assignedUser(userEntity)
                 .build();
@@ -84,20 +89,85 @@ public class TaskServiceImpl implements TaskService {
 
     }
 
+    @Override
+    public List<TaskResponseDto> getUserTaskByDate(String date) {
+
+        LocalDate localDate = LocalDate.parse(date);
+        UserEntity userEntity = getUserFromSecurityContext();
+
+        List<TaskEntity> listOfTask = taskRepository.findByAssignedUser_IdAndTaskDate(userEntity.getId(), localDate);
+
+        return listOfTask.stream()
+                .map(
+                        (taskEntity) -> {
+
+                            var projectEntity = taskEntity.getProjectEntity();
+
+                            return TaskResponseDto.builder()
+                                    .taskId(taskEntity.getId())
+                                    .taskTitle(taskEntity.getTaskTitle())
+                                    .taskDescription(taskEntity.getTaskDescription())
+                                    .minutesSpend(taskEntity.getMinutes())
+                                    .projectId(projectEntity.getId())
+                                    .projectName(projectEntity.getProjectName())
+                                    .build();
+                        }
+                )
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteTask(long taskId) {
+        var userEntity = getUserFromSecurityContext();
+        System.out.println(userEntity.getId() + " this is user id");
+        System.out.println(taskId + " this is taskId");
+
+        boolean isPresent = false;
+        TaskEntity task = null;
+
+        for (TaskEntity taskEntity : userEntity.getSetOfTask()) {
+            if (taskEntity.getId() == taskId) {
+                System.out.println(taskEntity.getId() + "**************");
+
+                isPresent = true;
+                task = taskEntity;
+                break;
+            }
+        }
+
+        if (isPresent) {
+
+            var projectEntity = task.getProjectEntity();
+
+            projectEntity.getTaskEntitySet().remove(task);
+            userEntity.getSetOfTask().remove(task);
+            userRepository.save(userEntity);
+            projectRepository.save(projectEntity);
+
+            taskRepository.deleteById(taskId);
+
+            System.out.println("******* done *****");
+
+            return;
+        }
+
+        throw new ProjectNotPresentException("you cannot delete this task ");
+
+    }
+
     private UserEntity getUserFromSecurityContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        long userId =  customUserDetails.getUserId();
+        long userId = customUserDetails.getUserId();
 
         return userRepository.findById(userId)
                 .orElseThrow(
                         () -> new UserNotPresentException(
-                                String.format("user with user Id : %s not present",userId)
+                                String.format("user with user Id : %s not present", userId)
                         )
                 );
     }
-
 
 
 }

@@ -8,6 +8,7 @@ import com.rkt.app.dto.responseDto.project.PaginationResponseDto;
 import com.rkt.app.dto.responseDto.project.ProjectCustomerNameIdDto;
 import com.rkt.app.dto.responseDto.project.ProjectResponseDto;
 import com.rkt.app.dto.responseDto.task.TaskDateCountDto;
+import com.rkt.app.dto.responseDto.user.UserResponseDto;
 import com.rkt.app.entity.CustomerEntity;
 import com.rkt.app.entity.ProjectEntity;
 import com.rkt.app.entity.TaskEntity;
@@ -202,6 +203,39 @@ public class ProjectServiceImpl implements ProjectService {
                 )
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public List<?> getAllProjectUsers(long projectId) {
+
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(()-> new ProjectNotPresentException("project does not exist."));
+
+
+        Set<UserEntity> userEntitySet = projectEntity.getAssignedUsers();
+
+        Set<TaskEntity> taskEntitySet = projectEntity.getTaskEntitySet();
+
+        Map<UserEntity,Integer> mapOfCountOfTask = new HashMap<>();
+
+        taskEntitySet.forEach(
+                (taskEntity ) -> {
+                    var userEntity = taskEntity.getAssignedUser();
+                    mapOfCountOfTask.put(userEntity,mapOfCountOfTask.getOrDefault(userEntity,0) + 1);
+                }
+        );
+
+
+        return userEntitySet.stream()
+                .map(
+                        (userEntity) -> UserResponseDto.builder()
+                                .userId(userEntity.getId())
+                                .name(userEntity.getName())
+                                .email(userEntity.getEmail())
+                                .projectTaskCount(mapOfCountOfTask.getOrDefault(userEntity,0))
+                                .build()
+                )
+                .collect(Collectors.toList());
     }
 }
 

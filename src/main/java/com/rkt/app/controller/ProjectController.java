@@ -64,4 +64,9 @@ public class ProjectController {
     public ResponseEntity<?> getAllDateTaskCount(@RequestParam("projectId") long projectId) {
         return ResponseEntity.ok(projectService.getAllDateTaskCount(projectId));
     }
+
+    @GetMapping("/get-all-users-of-project")
+    public ResponseEntity<?> getAllUserOfProject(@RequestParam("projectId")long projectId) {
+        return ResponseEntity.ok(projectService.getAllProjectUsers(projectId));
+    }
 }

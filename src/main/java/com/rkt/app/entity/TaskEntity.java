@@ -26,6 +26,7 @@ public class TaskEntity {
     private Long id;
     private String taskTitle;
     private String taskDescription;
+    private int minutes;
 
     @Column(nullable = false,updatable = false)
     private LocalDate taskDate; // this field we will get from front-end...

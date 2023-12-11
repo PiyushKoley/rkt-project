@@ -20,4 +20,19 @@ public class TaskController {
         return ResponseEntity.ok("Task added");
     }
 
+    @GetMapping("/get-user-task-by-date")
+    public ResponseEntity<?> getUserTaskByDate(@RequestParam("date") String date) {
+
+        return ResponseEntity.ok(taskService.getUserTaskByDate(date));
+
+
+
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteTask(@RequestParam("taskId") long taskId) {
+        taskService.deleteTask(taskId);
+        return ResponseEntity.ok("task deleted successfully...");
+    }
+
 }
