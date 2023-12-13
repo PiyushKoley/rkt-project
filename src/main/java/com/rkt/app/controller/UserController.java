@@ -89,13 +89,6 @@ public class UserController {
         return new ResponseEntity<>(loginResponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/token_valid_till")
-    public ResponseEntity<?> tokenValidTill(HttpServletRequest request) {
-
-        Date date = jwtTokenGenerator.getTokenExpiry(request);
-        System.out.println(date);
-        return ResponseEntity.ok(date.toString());
-    }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody()RefreshTokenDto refreshTokenDto) {

@@ -1,7 +1,10 @@
 package com.rkt.app.advice;
 
 import com.rkt.app.exception.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -66,4 +69,17 @@ public class UserExceptionHandler {
     public String handleUserNotPresentException(MenuNotPresentException ex) {
         return ex.getMessage();
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public String handleRequestBodyNotFoundException(HttpMessageNotReadableException ex) {
+        return "Required request body is missing. Please provide request body.";
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    public String handleEException(InsufficientAuthenticationException ex) {
+        return "fffdfdfdfdffdf";
+    }
+
 }

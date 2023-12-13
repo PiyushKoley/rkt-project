@@ -1,13 +1,17 @@
 package com.rkt.app.security;
 
+import com.rkt.app.exception.TokenExpiresException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.security.Key;
 import java.util.Date;
 
@@ -29,44 +33,28 @@ public class JwtTokenGenerator {
         return token;
     }
 
-    public Date getTokenExpiry( HttpServletRequest request) {
-        String token = getTokenFromRequest(request);
-        Claims claims;
-//        try {
-            claims = Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody();
-//        }
-//        catch(ExpiredJwtException exception){
-//            DecodedJWT decodedJWT = checkExpiredAccessToken(token);
-//            return decodedJWT.getExpiresAt();
-//        }
-        return claims.getExpiration();
-
-    }
-    private String getTokenFromRequest(HttpServletRequest request) {
-
-        String bearerToken = request.getHeader("Authorization");
-
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-
-        return null;
-    }
 
     private Key getKey() {
         byte[] bytes = SecurityConstants.JWT_SECRET.getBytes();
         return Keys.hmacShaKeyFor(bytes);
     }
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, HttpServletResponse response) throws IOException {
         try {
             Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token);
             return true;
         }
-//        catch(ExpiredJwtException exception){
+        catch(ExpiredJwtException exception){
 //            checkExpiredAccessToken(token);
 //            return true;
-//        }
+            response.getWriter().write("token is expired plz check");
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            System.out.println("inside############");
+            return false;
+        }
         catch (Exception e) {
+            response.getWriter().write("token is tempered");
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            System.out.println("tempered############");
             return false;
         }
     }
@@ -85,27 +73,4 @@ public class JwtTokenGenerator {
         return claims.getSubject();
     }
 
-//    private DecodedJWT checkExpiredAccessToken(String token) {
-//
-//        DecodedJWT decodedJWT = JWT.decode(token);
-//
-//        Date expiredAt = decodedJWT.getExpiresAt();
-//
-//        System.out.println("**** THIS IS EXPIRED TOKEN **** => " + expiredAt);
-//
-//        long currentTime = Instant.now().toEpochMilli();
-//        long expiredTime = expiredAt.getTime();
-//
-//        // with in two hours after expiration we can use that expired token also...
-//        long shouldNotBeMore = (long)2*60*60*1000;
-//
-//        // if expired time is more than two hours then throw exception .
-//        // and it will get handled by AuthenticationEntryPoint.
-//        // and user have to use refresh token in that case...
-//        if((currentTime - expiredTime) > shouldNotBeMore) {
-//            throw new RuntimeException("token expired. Login again.");
-//        }
-//
-//        return decodedJWT;
-//    }
 }
