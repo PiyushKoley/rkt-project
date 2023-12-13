@@ -2,7 +2,6 @@ package com.rkt.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rkt.app.enums.ProjectType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,8 +31,7 @@ public class ProjectEntity {
     private String projectName;
     private String projectDescription;
     private String projectManager;
-    @Enumerated(EnumType.STRING)
-    private ProjectType projectType;
+    private String projectType;
 
     @CreationTimestamp
     @Column(updatable = false,nullable = false)

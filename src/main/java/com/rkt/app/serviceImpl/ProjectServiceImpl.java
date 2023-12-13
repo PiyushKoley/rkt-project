@@ -9,23 +9,23 @@ import com.rkt.app.dto.responseDto.project.ProjectCustomerNameIdDto;
 import com.rkt.app.dto.responseDto.project.ProjectResponseDto;
 import com.rkt.app.dto.responseDto.task.TaskDateCountDto;
 import com.rkt.app.dto.responseDto.user.UserResponseDto;
-import com.rkt.app.entity.CustomerEntity;
-import com.rkt.app.entity.ProjectEntity;
-import com.rkt.app.entity.TaskEntity;
-import com.rkt.app.entity.UserEntity;
-import com.rkt.app.enums.ProjectType;
+import com.rkt.app.entity.*;
 import com.rkt.app.exception.CustomerNotPresentException;
+import com.rkt.app.exception.GeneralException;
 import com.rkt.app.exception.ProjectNotPresentException;
 import com.rkt.app.exception.UserNotPresentException;
 import com.rkt.app.repository.CustomerRepository;
 import com.rkt.app.repository.ProjectRepository;
+import com.rkt.app.repository.ProjectTypeRepository;
 import com.rkt.app.repository.UserRepository;
 import com.rkt.app.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -42,6 +42,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProjectTypeRepository projectTypeRepository;
 
     @Override
     public void addNewProject(ProjectDto projectDto) {
@@ -61,7 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .projectName(projectDto.getProjectName())
                 .projectDescription(projectDto.getProjectDescription())
                 .projectManager(projectDto.getProjectManager())
-                .projectType(ProjectType.valueOf(projectDto.getProjectType()))
+                .projectType(projectDto.getProjectType())
                 .customerEntity(customerEntity)
                 .build();
 
@@ -118,7 +121,7 @@ public class ProjectServiceImpl implements ProjectService {
                 );
 
         projectEntity.setProjectName(projectUpdateDto.getProjectName());
-        projectEntity.setProjectType(ProjectType.valueOf(projectUpdateDto.getProjectType()));
+        projectEntity.setProjectType(projectUpdateDto.getProjectType());
         projectEntity.setProjectManager(projectUpdateDto.getProjectManager());
         projectEntity.setProjectDescription(projectUpdateDto.getProjectDescription());
 
@@ -237,5 +240,33 @@ public class ProjectServiceImpl implements ProjectService {
                 )
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void addProjectType(String projectType) {
+
+        if(!StringUtils.hasText(projectType)) {
+//            return ResponseEntity.badRequest().body("please provide valid project Type.");
+            throw new GeneralException("please provide valid project Type.");
+        }
+
+        if(projectTypeRepository.existsByProjectTypeIgnoreCase(projectType)) {
+            throw new GeneralException("project type already exists.");
+        }
+        var projectTypeEntity = ProjectTypeEntity.builder()
+                .projectType(projectType)
+                .build();
+
+        projectTypeRepository.save(projectTypeEntity);
+
+        System.out.println("inside service project type");
+    }
+
+    @Override
+    public List<?> getAllProjectType() {
+
+        return projectTypeRepository.findAll();
+    }
+
+
 }
 

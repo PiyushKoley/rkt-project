@@ -14,4 +14,5 @@ public interface TaskService {
 
     void deleteTask(long taskId);
 
+    List<?> getUsersAllTaskCountByDate();
 }

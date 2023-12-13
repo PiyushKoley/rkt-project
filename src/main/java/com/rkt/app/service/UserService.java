@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface UserService {
 
-    public void createUser(UserDto userDto) ;
+    void createUser(UserDto userDto) ;
 
-    public List<UserNameIdDto> getAllUserNameId();
+    List<UserNameIdDto> getAllUserNameId();
 
     List<ProjectNameIdDto> getAllProjectOfUser();
 

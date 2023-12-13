@@ -2,6 +2,7 @@ package com.rkt.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.rkt.app.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,8 +25,8 @@ public class UserEntity {
     private int age;
     private String email;
     private String password;
-//    @Enumerated(EnumType.STRING)
-//    private Role role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "assignedUser")
     @JsonIgnore

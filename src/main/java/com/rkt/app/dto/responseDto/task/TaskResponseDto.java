@@ -14,6 +14,7 @@ public class TaskResponseDto {
     private String taskTitle;
     private String taskDescription;
     private int minutesSpend;
+    private String billable;
     private long projectId;
     private String projectName;
 }

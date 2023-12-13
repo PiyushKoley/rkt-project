@@ -27,6 +27,7 @@ public class TaskEntity {
     private String taskTitle;
     private String taskDescription;
     private int minutes;
+    private boolean billable;
 
     @Column(nullable = false,updatable = false)
     private LocalDate taskDate; // this field we will get from front-end...

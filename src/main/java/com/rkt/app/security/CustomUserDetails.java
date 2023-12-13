@@ -2,9 +2,12 @@ package com.rkt.app.security;
 
 import com.rkt.app.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -15,9 +18,9 @@ public class CustomUserDetails implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return Set.of(new SimpleGrantedAuthority(/*userEntity.getRole().toString()*/));
+        SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_"+userEntity.getRole().toString());
 
-        return null;
+        return List.of(sga);
     }
 
     @Override
@@ -36,6 +39,9 @@ public class CustomUserDetails implements UserDetails {
 //    public UserEntity getUserEntity() {
 //        return userEntity;
 //    }
+    public String getUserRole() {
+        return userEntity.getRole().toString();
+    }
 
     @Override
     public boolean isAccountNonExpired() {

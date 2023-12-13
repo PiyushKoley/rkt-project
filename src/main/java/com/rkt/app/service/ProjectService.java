@@ -29,4 +29,9 @@ public interface ProjectService {
     List<TaskDateCountDto> getAllDateTaskCount(long projectId);
 
     List<?> getAllProjectUsers(long projectId);
+
+    void addProjectType(String projectType);
+
+    List<?> getAllProjectType();
+
 }

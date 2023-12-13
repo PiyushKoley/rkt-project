@@ -4,6 +4,7 @@ import com.rkt.app.dto.requestDto.user.UserDto;
 import com.rkt.app.dto.responseDto.project.ProjectNameIdDto;
 import com.rkt.app.dto.responseDto.user.UserNameIdDto;
 import com.rkt.app.entity.UserEntity;
+import com.rkt.app.enums.Role;
 import com.rkt.app.exception.EmailAlreadyInUserException;
 import com.rkt.app.repository.UserRepository;
 import com.rkt.app.security.CustomUserDetails;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
                 .name(userDto.getName())
                 .age(userDto.getAge())
                 .email(userDto.getEmail())
-//                .role(Role.valueOf(userDto.getRole()))
+                .role(Role.valueOf(userDto.getRole().toUpperCase()))
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .build();
 

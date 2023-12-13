@@ -15,7 +15,8 @@ public class TaskController {
     private TaskService taskService;
 
     @PostMapping("/add-task")
-    public ResponseEntity<?> addNewTask(@Valid @RequestBody() TaskDto taskDto) {
+    public ResponseEntity<?> addNewTask(@Valid @RequestBody() TaskDto taskDto) throws InterruptedException {
+
         taskService.addNewTask(taskDto);
         return ResponseEntity.ok("Task added");
     }
@@ -27,6 +28,11 @@ public class TaskController {
 
 
 
+    }
+
+    @GetMapping("/get-all-task-hour-count-of-user")
+    public ResponseEntity<?> getAllUsersTaskCountByDate() {
+        return ResponseEntity.ok(taskService.getUsersAllTaskCountByDate());
     }
 
     @DeleteMapping("/delete")

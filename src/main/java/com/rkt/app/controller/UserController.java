@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -39,7 +41,10 @@ public class UserController {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
+    //============================ admin will use these apis ============================
+
     @PostMapping("/signup")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createUser(@Valid @RequestBody()UserDto userDto) throws EmailAlreadyInUserException {
 
         userService.createUser(userDto);
@@ -47,6 +52,14 @@ public class UserController {
         return ResponseEntity.ok("user created.");
 
     }
+
+    @GetMapping("/get-all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getAllUserNameIdDto(){
+        return ResponseEntity.ok(userService.getAllUserNameId());
+    }
+
+    //========================================================================================
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody()LoginDto loginDto) {
@@ -97,22 +110,17 @@ public class UserController {
         return ResponseEntity.ok(loginResponseDto);
     }
 
-    // ====================== admin will user this api ==========================
-    @GetMapping("/get-all")
-//    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<?> getAllUserNameIdDto(){
-        return ResponseEntity.ok(userService.getAllUserNameId());
-    }
-
-    //========================================================================
     @GetMapping("/info")
     public ResponseEntity<?> getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
+        Map<String,String> responseMap = new HashMap<>();
+        responseMap.put("email" , userDetails.getUsername());
+        responseMap.put("role", userDetails.getUserRole());
 
-        return ResponseEntity.ok(userDetails.getUsername());
+        return ResponseEntity.ok(responseMap);
     }
 
     @GetMapping("/get-projects")

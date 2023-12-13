@@ -4,10 +4,12 @@ package com.rkt.app.serviceImpl;
 
 import com.rkt.app.dto.requestDto.task.TaskDto;
 import com.rkt.app.dto.requestDto.task.TaskUpdateDto;
+import com.rkt.app.dto.responseDto.task.TaskCountAndTimeSpendForDateDto;
 import com.rkt.app.dto.responseDto.task.TaskResponseDto;
 import com.rkt.app.entity.ProjectEntity;
 import com.rkt.app.entity.TaskEntity;
 import com.rkt.app.entity.UserEntity;
+import com.rkt.app.exception.GeneralException;
 import com.rkt.app.exception.ProjectNotPresentException;
 import com.rkt.app.exception.UserNotPresentException;
 import com.rkt.app.repository.ProjectRepository;
@@ -15,6 +17,7 @@ import com.rkt.app.repository.TaskRepository;
 import com.rkt.app.repository.UserRepository;
 import com.rkt.app.security.CustomUserDetails;
 import com.rkt.app.service.TaskService;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.config.Task;
 import org.springframework.security.core.Authentication;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +63,7 @@ public class TaskServiceImpl implements TaskService {
                 .taskDescription(taskDto.getTaskDescription())
                 .taskDate(LocalDate.parse(taskDto.getTaskDate()))
                 .minutes(taskDto.getMinutes())
+                .billable(taskDto.isBillable())
                 .projectEntity(projectEntity)
                 .assignedUser(userEntity)
                 .build();
@@ -92,7 +97,13 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskResponseDto> getUserTaskByDate(String date) {
 
-        LocalDate localDate = LocalDate.parse(date);
+        LocalDate localDate = null;
+        try {
+            localDate = LocalDate.parse(date);
+        }
+        catch (DateTimeParseException exception) {
+            throw new GeneralException("please provide a valid date ");
+        }
         UserEntity userEntity = getUserFromSecurityContext();
 
         List<TaskEntity> listOfTask = taskRepository.findByAssignedUser_IdAndTaskDate(userEntity.getId(), localDate);
@@ -107,6 +118,7 @@ public class TaskServiceImpl implements TaskService {
                                     .taskId(taskEntity.getId())
                                     .taskTitle(taskEntity.getTaskTitle())
                                     .taskDescription(taskEntity.getTaskDescription())
+                                    .billable(taskEntity.isBillable() ? "Yes" : "No")
                                     .minutesSpend(taskEntity.getMinutes())
                                     .projectId(projectEntity.getId())
                                     .projectName(projectEntity.getProjectName())
@@ -118,24 +130,15 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteTask(long taskId) {
+
         var userEntity = getUserFromSecurityContext();
-        System.out.println(userEntity.getId() + " this is user id");
-        System.out.println(taskId + " this is taskId");
 
-        boolean isPresent = false;
-        TaskEntity task = null;
+        TaskEntity task = taskRepository.findById(taskId).orElseThrow(
+                ()-> new UserNotPresentException("task does not exist")
+        );
 
-        for (TaskEntity taskEntity : userEntity.getSetOfTask()) {
-            if (taskEntity.getId() == taskId) {
-                System.out.println(taskEntity.getId() + "**************");
 
-                isPresent = true;
-                task = taskEntity;
-                break;
-            }
-        }
-
-        if (isPresent) {
+        if (task.getAssignedUser().getId() == userEntity.getId()) {
 
             var projectEntity = task.getProjectEntity();
 
@@ -146,13 +149,52 @@ public class TaskServiceImpl implements TaskService {
 
             taskRepository.deleteById(taskId);
 
-            System.out.println("******* done *****");
-
             return;
         }
 
         throw new ProjectNotPresentException("you cannot delete this task ");
 
+    }
+
+    @Override
+    public List<TaskCountAndTimeSpendForDateDto> getUsersAllTaskCountByDate() {
+        UserEntity userEntity = getUserFromSecurityContext();
+
+        Set<TaskEntity> taskEntitySet = userEntity.getSetOfTask();
+        Map<LocalDate,List<Integer>> localDateListHashMap = new HashMap<>();
+
+        taskEntitySet.forEach(
+                (taskEntity )-> {
+                    List<Integer> list = localDateListHashMap.get(taskEntity.getTaskDate());
+
+                    if(list == null ) {
+                        list = new ArrayList<>(List.of(0, 0));
+                    }
+
+                    int timeSpend = list.get(0) + taskEntity.getMinutes();
+                    int taskCount = list.get(1) + 1;
+
+                    list.add(0, timeSpend);
+                    list.add(1,taskCount);
+                    localDateListHashMap.put(taskEntity.getTaskDate(),list);
+                }
+        );
+
+
+
+        return localDateListHashMap.keySet().stream()
+                .map(
+                        (localDate) -> {
+                            var listOfCountAndTime = localDateListHashMap.get(localDate);
+
+                            return TaskCountAndTimeSpendForDateDto.builder()
+                                    .date(localDate.toString())
+                                    .timeSpend(listOfCountAndTime.get(0))
+                                    .taskCount(listOfCountAndTime.get(1))
+                                    .build();
+                        }
+                )
+                .collect(Collectors.toList());
     }
 
     private UserEntity getUserFromSecurityContext() {

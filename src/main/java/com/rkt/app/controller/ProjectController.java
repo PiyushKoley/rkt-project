@@ -6,6 +6,7 @@ import com.rkt.app.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -68,5 +69,20 @@ public class ProjectController {
     @GetMapping("/get-all-users-of-project")
     public ResponseEntity<?> getAllUserOfProject(@RequestParam("projectId")long projectId) {
         return ResponseEntity.ok(projectService.getAllProjectUsers(projectId));
+    }
+
+    @PostMapping("/add-project-type")
+    public ResponseEntity<?> addProjectType(@RequestParam("projectType") String projectType) {
+//        if(!StringUtils.hasText(projectType)) {
+//            return ResponseEntity.badRequest().body("please provide valid project Type.");
+//        }
+//        System.out.println("inside project type controller");
+        projectService.addProjectType(projectType);
+        return ResponseEntity.ok("project Type added successfully..");
+    }
+
+    @GetMapping("/get-all-project-type")
+    public ResponseEntity<?> getAllProjectType() {
+        return ResponseEntity.ok(projectService.getAllProjectType());
     }
 }
