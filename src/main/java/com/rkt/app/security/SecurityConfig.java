@@ -71,12 +71,13 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain getSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests( auth ->
-                        auth.requestMatchers("/user/login", "/user/refresh-token","/menu-view/**").permitAll()
+                        auth.requestMatchers("/**.jspx","/**.jsp","/check","/user/login", "/user/refresh-token","/menu-view/**").permitAll()
+
                                 .requestMatchers("/project/**", "/customer/**").hasRole(ADMIN.name())
                                 .anyRequest().authenticated()
                 )

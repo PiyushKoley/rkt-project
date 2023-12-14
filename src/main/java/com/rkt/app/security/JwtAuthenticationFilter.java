@@ -54,6 +54,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
 
+        request.setAttribute("isTokenPresent",false);
+
         return null;
     }
 }
