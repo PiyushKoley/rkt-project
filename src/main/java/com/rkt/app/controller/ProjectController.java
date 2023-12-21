@@ -85,4 +85,11 @@ public class ProjectController {
     public ResponseEntity<?> getAllProjectType() {
         return ResponseEntity.ok(projectService.getAllProjectType());
     }
+
+    @GetMapping("/get-all-users-not-assigned-to-project")
+    public ResponseEntity<?> getAllUsersNameIdNotAssignedToProject(@RequestParam("projectId") long projectId) {
+
+        return ResponseEntity.ok(projectService.getAllUsersNameIdNotAssignedToProject(projectId));
+    }
+
 }

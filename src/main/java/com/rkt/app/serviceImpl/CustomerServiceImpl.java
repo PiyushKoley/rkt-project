@@ -4,7 +4,7 @@ import com.rkt.app.convertor.CustomerConvertor;
 import com.rkt.app.dto.requestDto.customer.CustomerDto;
 import com.rkt.app.dto.requestDto.customer.CustomerUpdateDto;
 import com.rkt.app.dto.responseDto.customer.CustomerNameIdDto;
-import com.rkt.app.dto.responseDto.project.PaginationResponseDto;
+import com.rkt.app.dto.responseDto.PaginationResponseDto;
 import com.rkt.app.dto.responseDto.customer.CustomerResponseDto;
 import com.rkt.app.entity.CustomerEntity;
 import com.rkt.app.exception.CustomerAlreadyExistException;

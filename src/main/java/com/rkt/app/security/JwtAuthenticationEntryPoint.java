@@ -14,7 +14,10 @@ import java.io.IOException;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        if(request.getAttribute("isTokenPresent")!=null) {
+//        if(request.getRequestURI().equalsIgnoreCase("/user/login")) {
+//           return;
+//        }
+        if(request.getAttribute("isTokenPresent")!=null ) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("Token is required.");
         }

@@ -1,5 +1,6 @@
 package com.rkt.app.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rkt.app.dto.requestDto.user.LoginDto;
 import com.rkt.app.dto.requestDto.user.RefreshTokenDto;
 import com.rkt.app.dto.requestDto.user.UserDto;
@@ -11,6 +12,8 @@ import com.rkt.app.service.RefreshTokenService;
 import com.rkt.app.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -57,6 +60,22 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllUserNameIdDto(){
         return ResponseEntity.ok(userService.getAllUserNameId());
+    }
+
+    @GetMapping("/get-with-pagination")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getUserWithPagination(@RequestParam(value = "pageNumber",defaultValue = "0") int pageNumber,
+                                                   @RequestParam(value = "pageSize",defaultValue = "10") int pageSize) {
+
+        return ResponseEntity.ok(userService.getUsersWithPagination(pageNumber,pageSize));
+
+    }
+
+    @GetMapping("/search-user")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> searchUser(@RequestParam("name") String name) {
+
+        return ResponseEntity.ok(userService.searchUserByName(name));
     }
 
     //========================================================================================

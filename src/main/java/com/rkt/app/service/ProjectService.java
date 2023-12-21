@@ -2,14 +2,12 @@ package com.rkt.app.service;
 
 import com.rkt.app.dto.requestDto.project.ProjectDto;
 import com.rkt.app.dto.requestDto.project.ProjectUpdateDto;
-import com.rkt.app.dto.responseDto.project.PaginationResponseDto;
+import com.rkt.app.dto.responseDto.PaginationResponseDto;
 import com.rkt.app.dto.responseDto.project.ProjectCustomerNameIdDto;
 import com.rkt.app.dto.responseDto.project.ProjectResponseDto;
 import com.rkt.app.dto.responseDto.task.TaskDateCountDto;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 public interface ProjectService {
 
@@ -34,4 +32,5 @@ public interface ProjectService {
 
     List<?> getAllProjectType();
 
+    List<?> getAllUsersNameIdNotAssignedToProject(long projectId);
 }

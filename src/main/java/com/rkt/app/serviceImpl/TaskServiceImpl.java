@@ -48,6 +48,10 @@ public class TaskServiceImpl implements TaskService {
 
         long projectId = Long.parseLong(taskDto.getProjectId());
 
+        if(projectId == 0) {
+            addNewTaskWithOutProject(taskDto);
+            return;
+        }
 
         ProjectEntity projectEntity = projectRepository.findById(projectId).orElseThrow(
                 () -> new ProjectNotPresentException(
@@ -120,8 +124,8 @@ public class TaskServiceImpl implements TaskService {
                                     .taskDescription(taskEntity.getTaskDescription())
                                     .billable(taskEntity.isBillable() ? "Yes" : "No")
                                     .minutesSpend(taskEntity.getMinutes())
-                                    .projectId(projectEntity.getId())
-                                    .projectName(projectEntity.getProjectName())
+                                    .projectId((projectEntity!=null) ? projectEntity.getId() : 0)
+                                    .projectName((projectEntity!= null) ? projectEntity.getProjectName() : "No Project")
                                     .build();
                         }
                 )
@@ -195,6 +199,29 @@ public class TaskServiceImpl implements TaskService {
                         }
                 )
                 .collect(Collectors.toList());
+    }
+
+    private void addNewTaskWithOutProject(TaskDto taskDto) {
+        UserEntity userEntity = getUserFromSecurityContext();
+
+
+        TaskEntity taskEntity = TaskEntity.builder()
+                .taskTitle(taskDto.getTaskTitle())
+                .taskDescription(taskDto.getTaskDescription())
+                .taskDate(LocalDate.parse(taskDto.getTaskDate()))
+                .minutes(taskDto.getMinutes())
+                .billable(false)
+                .projectEntity(null)
+                .assignedUser(userEntity)
+                .build();
+
+        taskEntity = taskRepository.save(taskEntity);
+
+        //================== Mapping task to user=========================
+        Set<TaskEntity> assignedTaskToUser = userEntity.getSetOfTask();
+        assignedTaskToUser.add(taskEntity);
+        userEntity.setSetOfTask(assignedTaskToUser);
+        userRepository.save(userEntity);
     }
 
     private UserEntity getUserFromSecurityContext() {

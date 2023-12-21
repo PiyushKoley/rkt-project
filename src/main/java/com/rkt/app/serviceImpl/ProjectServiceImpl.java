@@ -2,9 +2,10 @@ package com.rkt.app.serviceImpl;
 
 import com.rkt.app.convertor.CustomerConvertor;
 import com.rkt.app.convertor.ProjectConvertor;
+import com.rkt.app.convertor.UserConvertor;
 import com.rkt.app.dto.requestDto.project.ProjectDto;
 import com.rkt.app.dto.requestDto.project.ProjectUpdateDto;
-import com.rkt.app.dto.responseDto.project.PaginationResponseDto;
+import com.rkt.app.dto.responseDto.PaginationResponseDto;
 import com.rkt.app.dto.responseDto.project.ProjectCustomerNameIdDto;
 import com.rkt.app.dto.responseDto.project.ProjectResponseDto;
 import com.rkt.app.dto.responseDto.task.TaskDateCountDto;
@@ -23,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -265,6 +265,16 @@ public class ProjectServiceImpl implements ProjectService {
     public List<?> getAllProjectType() {
 
         return projectTypeRepository.findAll();
+    }
+
+    @Override
+    public List<?> getAllUsersNameIdNotAssignedToProject(long projectId) {
+
+        return userRepository.getAllUsersNotAssignedToProject(projectId)
+                .stream()
+                .map(UserConvertor::convertEntityToUserNameIdDTo)
+                .collect(Collectors.toList());
+
     }
 
 
